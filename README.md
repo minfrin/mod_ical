@@ -105,7 +105,7 @@ LoadModule ical_module modules/mod_ical.so
 </Location>
 ```
 
-For more advanced configurations, see the documentation for
+For more advanced configurations, see the **mod_filter** documentation for
 [Apache httpd].
 
 
