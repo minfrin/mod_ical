@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(mod_ical, 0.0.1, minfrin@sharp.fm)
+AC_INIT(mod_ical, 0.0.2, minfrin@sharp.fm)
 AM_INIT_AUTOMAKE([dist-bzip2])
 AC_CONFIG_FILES([Makefile mod_ical.spec])
 AC_CONFIG_SRCDIR([mod_ical.c])

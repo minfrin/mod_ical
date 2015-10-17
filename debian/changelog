@@ -1,5 +1,10 @@
+mod-ical (0.0.2) stable; urgency=low
+
+  * Second Release.
+
+ -- Graham Leggett <minfrin@sharp.fm>  Sat, 17 Oct 2015 13:37:46 +0000
 mod-ical (0.0.1) stable; urgency=low
 
   * Initial Release.
 
- -- Graham Leggett <minfrin@sharp.fm>  Sun, 11 Nov 2012 13:37:46 +0000
+ -- Graham Leggett <minfrin@sharp.fm>  Sat, 17 Oct 2015 13:37:46 +0000
