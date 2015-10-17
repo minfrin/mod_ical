@@ -4,6 +4,10 @@
 Allows iCal data to be filtered and made available to client
 side web clients in iCal, xCal and jCal formats.
 
+The module was built to allow raw iCal data to embedded within
+websites and javascript applications without server side
+development.
+
 
 ### Features
 
