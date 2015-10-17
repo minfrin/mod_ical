@@ -2,6 +2,7 @@
 .project
 *.slo
 Makefile
+*.spec
 
 # http://www.gnu.org/software/automake
 
