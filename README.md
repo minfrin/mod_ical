@@ -85,6 +85,10 @@ basis by the addition of the following optional query parameters:
 
 - **format**: Set the formatting to 'none', 'spaced' or 'pretty'.
 
+```
+http://example.com/calendars/upcoming-events.ics?filter=next&format=pretty
+```
+
 
 ### Example Configuration
 
