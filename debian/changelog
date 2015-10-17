@@ -1,0 +1,5 @@
+mod-ical (0.0.1) stable; urgency=low
+
+  * Initial Release.
+
+ -- Graham Leggett <minfrin@sharp.fm>  Sun, 11 Nov 2012 13:37:46 +0000

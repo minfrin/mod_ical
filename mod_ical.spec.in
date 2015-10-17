@@ -1,0 +1,45 @@
+# RPM Spec file for mod_ical
+
+%define name      mod_ical
+%define summary   Apache mod_ical module
+%define license   None
+%define version   @PACKAGE_VERSION@
+%define release   1
+%define group     System Environment/Daemons
+%define source    %{name}-%{version}.tar.bz2
+%define packager  Graham Leggett
+%define buildroot %{_builddir}/%{name}-root
+%define modroot   %{_libdir}/httpd/modules
+
+Name:      %{name}
+Version:   %{version}
+Release:   %{release}
+Packager:  %{packager}
+Summary:   %{summary}
+License:  %{license}
+Group:     %{group}
+Source:   %{source}
+Prefix:    %{_prefix}
+Buildroot: %{buildroot}
+BuildRequires: httpd-devel, libical-devel, json-c-devel, libxml2-devel
+Requires: httpd
+
+%description
+The Apache mod_ical module provides a set of filters to
+filter iCalendar data and convert it to xCal/jCal.
+
+%prep
+%setup -q
+%build
+%configure
+make
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+%files
+%{modroot}/mod_ical.so
+

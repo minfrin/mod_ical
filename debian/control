@@ -1,0 +1,13 @@
+Source: mod-ical
+Priority: extra
+Maintainer: Graham Leggett <minfrin@sharp.fm>
+Build-Depends: debhelper (>= 8.0.0), autotools-dev, apache2-dev, libical-dev, libjson-c-dev, libxml2-dev
+Standards-Version: 3.9.2
+Section: libs
+
+Package: mod-ical
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libical, libjson-c, libxml2
+Description: The Apache mod_ical module provides a set of filters to filter iCalendar data and convert it to xCal/jCal.
+
