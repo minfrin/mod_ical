@@ -2155,7 +2155,7 @@ static apr_status_t ical_out_filter(ap_filter_t *f, apr_bucket_brigade *bb)
                     "unexpected content-type '%s', %s filter needs 'text/calendar', filter disabled",
                     ct, f->frec->name);
             ap_remove_output_filter(f);
-            return ap_pass_brigade(f->next, ctx->bb);
+            return ap_pass_brigade(f->next, bb);
         }
 
         ctx->bb = apr_brigade_create(r->pool, f->c->bucket_alloc);

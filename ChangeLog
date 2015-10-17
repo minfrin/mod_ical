@@ -1,6 +1,8 @@
 
 Changes with v0.0.2
 
+  *) Fix a segfault when the filter steps out of the way of non calendar
+     content. [Graham Leggett <minfrin@sharp.fm>]
 
 Changes with v0.0.1
 
