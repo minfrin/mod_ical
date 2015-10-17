@@ -1,6 +1,6 @@
 # mod_ical
 
-mod_ical is a iCalendar/jCal/xCal filter for [Apache httpd].
+**mod_ical** is a **iCalendar/jCal/xCal filter** for [Apache httpd].
 Allows iCal data to be filtered and made available to client
 side web clients in iCal, xCal and jCal formats.
 
@@ -11,9 +11,11 @@ side web clients in iCal, xCal and jCal formats.
   all future entries or all past entries relative to the current
   date.
 
-- Convert RFC5545 iCalendar streams into RFC6321 xCal XML streams.
+- Convert **RFC5545 iCalendar** streams into **RFC6321 xCal** XML
+  streams.
 
-- Convert RFC5545 iCalendar streams into RFC7265 jCal JSON streams.
+- Convert **RFC5545 iCalendar** streams into **RFC7265 jCal** JSON
+  streams.
 
 - Control filtering and formatting based on optional URL query
   parameters.
@@ -50,12 +52,12 @@ through the use of the following filters:
   streams depending on the client request. Can be used where
   control over the desired output format is requested by a
   client application.
-  
+
 - **ICALICAL**: Force output to RFC5545 iCal.
 
 - **ICALXCAL**: Force output to RFC6321 xCal. Can be used where the
   output is being processed on the server side by XSLT.
-  
+
 - **ICALJCAL**: Force output to RFC7265 jCal. Can be used where
   the client is not able to control the Accept header.
 
@@ -76,7 +78,7 @@ basis by the addition of the following optional query parameters:
 
 - **filter**: Set the filtering to 'none', 'next', 'last', future'
   or 'past'.
-  
+
 - **format**: Set the formatting to 'none', 'spaced' or 'pretty'.
 
 
