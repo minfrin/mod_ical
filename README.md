@@ -96,7 +96,7 @@ LoadModule ical_module modules/mod_ical.so
 ```
 
 For more advanced configurations, see the documentation for
-[Apache https].
+[Apache httpd].
 
 
 ### Version
