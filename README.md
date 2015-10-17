@@ -24,19 +24,19 @@ side web clients in iCal, xCal and jCal formats.
 Entries in the iCalendar stream can be filtered based on the
 following options:
 
-- none: Return all entries.
+- **none**: No filtering, return all entries.
 
-- next: Return the next entry relative to the current date. Can
+- **next**: Return the next entry relative to the current date. Can
   be used to indicate upcoming events in a web application.
-  
-- last: Return the last entry relative to the current date. Can
+
+- **last**: Return the last entry relative to the current date. Can
   be used to highlight the most recently passed event in a web
   application.
 
-- future: Return all entries whose end is past the current date.
+- **future**: Return all entries whose end is past the current date.
   Can be used to list all upcoming events.
-  
-- past: Return all entries whose end is in the past relative to
+
+- **past**: Return all entries whose end is in the past relative to
   the current date. Can be used to list all past events.
 
 
@@ -45,27 +45,27 @@ following options:
 The output format of the iCalendar stream can be controlled
 through the use of the following filters:
 
-- ICAL: Based on the contents of the Accept header, return the
+- **ICAL**: Based on the contents of the Accept header, return the
   RFC5545 iCal streams, RFC6321 xCal streams or RFC7265 jCal
   streams depending on the client request. Can be used where
   control over the desired output format is requested by a
   client application.
   
-- ICALICAL: Force output to RFC5545 iCal.
+- **ICALICAL**: Force output to RFC5545 iCal.
 
-- ICALXCAL: Force output to RFC6321 xCal. Can be used where the
+- **ICALXCAL**: Force output to RFC6321 xCal. Can be used where the
   output is being processed on the server side by XSLT.
   
-- ICALJCAL: Force output to RFC7265 jCal. Can be used where
+- **ICALJCAL**: Force output to RFC7265 jCal. Can be used where
   the client is not able to control the Accept header.
 
 
 ### Configuration Directives
 
-- ICalFilter: Set the filtering to 'none', 'next', 'last', future'
+- **ICalFilter**: Set the filtering to 'none', 'next', 'last', future'
   or 'past'. Defaults to 'past'.
 
-- ICalFormat: Set the formatting to 'none', 'spaced' or 'pretty'.
+- **ICalFormat**: Set the formatting to 'none', 'spaced' or 'pretty'.
   Defaults to 'none'.
 
 
@@ -74,10 +74,10 @@ through the use of the following filters:
 The configuration directives above can be overridden on a per URL
 basis by the addition of the following optional query parameters:
 
-- filter: Set the filtering to 'none', 'next', 'last', future'
+- **filter**: Set the filtering to 'none', 'next', 'last', future'
   or 'past'.
   
-- format: Set the formatting to 'none', 'spaced' or 'pretty'.
+- **format**: Set the formatting to 'none', 'spaced' or 'pretty'.
 
 
 ### Version
