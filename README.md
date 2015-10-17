@@ -106,7 +106,7 @@ mod_ical depends on:
 * [json-c] - json-c JSON library
 
 
-  [Apache httpd] <http://httpd.apache.org>
-  [libical] <https://github.com/libical/libical>
-  [libxml2] <http://www.xmlsoft.org/>
-  [json-c] <https://github.com/json-c/json-c/wiki>
+  [Apache httpd]: <http://httpd.apache.org>
+  [libical]: <https://github.com/libical/libical>
+  [libxml2]: <http://www.xmlsoft.org/>
+  [json-c]: <https://github.com/json-c/json-c/wiki>
