@@ -80,6 +80,25 @@ basis by the addition of the following optional query parameters:
 - **format**: Set the formatting to 'none', 'spaced' or 'pretty'.
 
 
+### Example Configuration
+
+The following example configuration shows how the **ICAL** filter
+can be added to the [Apache httpd] configuration.
+
+```
+LoadModule ical_module modules/mod_ical.so
+
+<Location /calendars/>
+  SetOutputFilter ICAL
+  ICalFilter none
+  ICalFormat pretty
+</Location>
+```
+
+For more advanced configurations, see the documentation for
+[Apache https].
+
+
 ### Version
 
 0.0.1: Initial release.
