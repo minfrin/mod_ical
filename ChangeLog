@@ -1,6 +1,9 @@
 
 Changes with v0.0.2
 
+  *) We change the content type, therefore we are a resource filter.
+     [Graham Leggett <minfrin@sharp.fm>]
+
   *) Limit the sanity check for non calendar content to the negotiated
      ICAL filter only. [Graham Leggett <minfrin@sharp.fm>]
 

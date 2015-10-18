@@ -2393,13 +2393,13 @@ static const command_rec ical_cmds[] = {
 static void ical_hooks(apr_pool_t* pool)
 {
     ap_register_output_filter("ICAL", ical_out_filter, ical_out_setup,
-            AP_FTYPE_CONTENT_SET);
+            AP_FTYPE_RESOURCE);
     ap_register_output_filter("ICALICAL", ical_out_filter, ical_out_ical_setup,
-            AP_FTYPE_CONTENT_SET);
+            AP_FTYPE_RESOURCE);
     ap_register_output_filter("ICALXCAL", ical_out_filter, ical_out_xcal_setup,
-            AP_FTYPE_CONTENT_SET);
+            AP_FTYPE_RESOURCE);
     ap_register_output_filter("ICALJCAL", ical_out_filter, ical_out_jcal_setup,
-            AP_FTYPE_CONTENT_SET);
+            AP_FTYPE_RESOURCE);
 }
 
 module AP_MODULE_DECLARE_DATA ical_module = {
