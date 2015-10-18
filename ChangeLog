@@ -1,4 +1,7 @@
 
+Changes with v0.0.3
+
+
 Changes with v0.0.2
 
   *) Make sure we handle a missing Accept header, and ensure if we
