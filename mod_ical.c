@@ -204,23 +204,12 @@ static apr_status_t icalduration_to_xml(const char *element,
     apr_status_t rv = APR_SUCCESS;
     int rc;
 
-    /* open duration element */
-    rc = xmlTextWriterStartElement(writer, BAD_CAST element);
-    if (rc < 0) {
-        return APR_EGENERAL;
-    }
-
     /* write duration element */
     {
         char *str = icaldurationtype_as_ical_string_r(duration);
-        rc = xmlTextWriterWriteFormatRaw(writer, "%s", str);
+        rc = xmlTextWriterWriteFormatElement(writer,
+                BAD_CAST element, "%s", str);
         icalmemory_free_buffer(str);
-    }
-
-    /* close duration element */
-    rc = xmlTextWriterEndElement(writer);
-    if (rc < 0) {
-        return APR_EGENERAL;
     }
 
     return rv;
@@ -255,32 +244,20 @@ static apr_status_t icaltime_to_xml(const char *element, struct icaltimetype tt,
     apr_status_t rv = APR_SUCCESS;
     int rc;
 
-    /* open time element */
-    rc = xmlTextWriterStartElement(writer, BAD_CAST element);
-    if (rc < 0) {
-        return APR_EGENERAL;
-    }
-
     if (tt.is_date) {
-        rc = xmlTextWriterWriteFormatRaw(writer, "%04d-%02d-%02d", tt.year,
+        rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST element, "%04d-%02d-%02d", tt.year,
                 tt.month, tt.day);
         if (rc < 0) {
             return APR_EGENERAL;
         }
     }
     else {
-        rc = xmlTextWriterWriteFormatRaw(writer,
+        rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST element,
                 "%04d-%02d-%02dT%02d:%02d:%02d", tt.year, tt.month, tt.day,
                 tt.hour, tt.minute, tt.second);
         if (rc < 0) {
             return APR_EGENERAL;
         }
-    }
-
-    /* close property element */
-    rc = xmlTextWriterEndElement(writer);
-    if (rc < 0) {
-        return APR_EGENERAL;
     }
 
     return rv;
@@ -335,22 +312,14 @@ static apr_status_t icalrecurrence_byday_to_xml(const char *element,
         int dow = icalrecurrencetype_day_day_of_week(array[i]);
         const char *daystr = icalrecur_weekday_to_string(dow);
 
-        rc = xmlTextWriterStartElement(writer, BAD_CAST element);
-        if (rc < 0) {
-            return APR_EGENERAL;
-        }
-
         if (pos == 0) {
-            rc = xmlTextWriterWriteFormatRaw(writer, "%s", daystr);
+            rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST element,
+                    "%s", daystr);
         }
         else {
-            rc = xmlTextWriterWriteFormatRaw(writer, "%d%s", pos, daystr);
+            rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST element,
+                    "%d%s", pos, daystr);
         }
-        if (rc < 0) {
-            return APR_EGENERAL;
-        }
-
-        rc = xmlTextWriterEndElement(writer);
         if (rc < 0) {
             return APR_EGENERAL;
         }
@@ -405,23 +374,14 @@ static apr_status_t icalrecurrence_bymonth_to_xml(const char *element,
 
     for (i = 0; i < limit && array[i] != ICAL_RECURRENCE_ARRAY_MAX; i++) {
 
-        rc = xmlTextWriterStartElement(writer, BAD_CAST element);
-        if (rc < 0) {
-            return APR_EGENERAL;
-        }
-
         if (icalrecurrencetype_month_is_leap(array[i])) {
-            rc = xmlTextWriterWriteFormatRaw(writer, "%dL",
-                    icalrecurrencetype_month_month(array[i]));
+            rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST element,
+                    "%dL", icalrecurrencetype_month_month(array[i]));
         }
         else {
-            rc = xmlTextWriterWriteFormatRaw(writer, "%d", array[i]);
+            rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST element,
+                    "%d", array[i]);
         }
-        if (rc < 0) {
-            return APR_EGENERAL;
-        }
-
-        rc = xmlTextWriterEndElement(writer);
         if (rc < 0) {
             return APR_EGENERAL;
         }
@@ -460,17 +420,8 @@ static apr_status_t icalrecurrence_by_to_xml(const char *element, short *array,
 
     for (i = 0; i < limit && array[i] != ICAL_RECURRENCE_ARRAY_MAX; i++) {
 
-        rc = xmlTextWriterStartElement(writer, BAD_CAST element);
-        if (rc < 0) {
-            return APR_EGENERAL;
-        }
-
-        rc = xmlTextWriterWriteFormatRaw(writer, "%d", array[i]);
-        if (rc < 0) {
-            return APR_EGENERAL;
-        }
-
-        rc = xmlTextWriterEndElement(writer);
+        rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST element,
+                "%d", array[i]);
         if (rc < 0) {
             return APR_EGENERAL;
         }
@@ -609,41 +560,27 @@ static apr_status_t icalrecurrencetype_to_xml(ap_filter_t *f,
 
         if (recur->until.year != 0) {
 
-            rc = xmlTextWriterStartElement(writer, BAD_CAST "until");
-            if (rc < 0) {
-                return APR_EGENERAL;
-            }
-
             if (recur->until.is_date) {
-                rc = xmlTextWriterWriteFormatRaw(writer,
+                rc = xmlTextWriterWriteFormatElement(writer,
+                        BAD_CAST "until",
                         "%04d-%02d-%02d", recur->until.year,
                         recur->until.month, recur->until.day);
             }
             else {
-                rc = xmlTextWriterWriteFormatRaw(writer,
+                rc = xmlTextWriterWriteFormatElement(writer,
+                        BAD_CAST "until",
                         "%04d-%02d-%02dT%02d:%02d:%02d",
                         recur->until.year, recur->until.month,
                         recur->until.day, recur->until.hour,
                         recur->until.minute, recur->until.second);
             }
 
-            rc = xmlTextWriterEndElement(writer);
-            if (rc < 0) {
-                return APR_EGENERAL;
-            }
-
         }
 
         if (recur->count != 0) {
 
-            rc = xmlTextWriterStartElement(writer, BAD_CAST "count");
-            if (rc < 0) {
-                return APR_EGENERAL;
-            }
-
-            rc = xmlTextWriterWriteFormatRaw(writer, "%d", recur->count);
-
-            rc = xmlTextWriterEndElement(writer);
+            rc = xmlTextWriterWriteFormatElement(writer,
+                    BAD_CAST "count", "%d", recur->count);
             if (rc < 0) {
                 return APR_EGENERAL;
             }
@@ -652,14 +589,8 @@ static apr_status_t icalrecurrencetype_to_xml(ap_filter_t *f,
 
         if (recur->interval != 1) {
 
-            rc = xmlTextWriterStartElement(writer, BAD_CAST "interval");
-            if (rc < 0) {
-                return APR_EGENERAL;
-            }
-
-            rc = xmlTextWriterWriteFormatRaw(writer, "%d", recur->interval);
-
-            rc = xmlTextWriterEndElement(writer);
+            rc = xmlTextWriterWriteFormatElement(writer,
+                    BAD_CAST "interval", "%d", recur->interval);
             if (rc < 0) {
                 return APR_EGENERAL;
             }
@@ -727,15 +658,9 @@ static apr_status_t icalrecurrencetype_to_xml(ap_filter_t *f,
             int dow = icalrecurrencetype_day_day_of_week(
                     recur->week_start);
 
-            rc = xmlTextWriterStartElement(writer, BAD_CAST "wkst");
-            if (rc < 0) {
-                return APR_EGENERAL;
-            }
-
-            rc = xmlTextWriterWriteFormatRaw(writer, "%s",
+            rc = xmlTextWriterWriteFormatElement(writer,
+                    BAD_CAST "wkst", "%s",
                     icalrecur_weekday_to_string(dow));
-
-            rc = xmlTextWriterEndElement(writer);
             if (rc < 0) {
                 return APR_EGENERAL;
             }
@@ -782,14 +707,29 @@ static apr_status_t icalvalue_multi_to_json(ap_filter_t *f, icalvalue *val,
     return APR_SUCCESS;
 }
 
-static apr_status_t icalvalue_multi_to_xml(ap_filter_t *f, icalvalue *val,
-        xmlTextWriterPtr writer)
+static apr_status_t icalvalue_multi_to_xml(ap_filter_t *f,
+        icalvalue *val, xmlTextWriterPtr writer)
 {
     int rc = 0;
 
     if (val) {
-        char *str = icalvalue_as_ical_string_r(val);
+        char *str;
+        icalvalue_kind kind = icalvalue_isa(val);
+        char *element = NULL;
 
+        /* work out the value type */
+        if (kind != ICAL_X_VALUE) {
+            element = apr_pstrdup(f->r->pool, icalvalue_kind_to_string(kind));
+        }
+        if (element) {
+            element = strlwr(element);
+        }
+        else {
+            element = "unknown";
+        }
+
+        /* write out each value */
+        str = icalvalue_as_ical_string_r(val);
         if (str) {
             const char *slider = str;
 
@@ -798,12 +738,14 @@ static apr_status_t icalvalue_multi_to_xml(ap_filter_t *f, icalvalue *val,
                 slider = ap_strchr(slider, ',');
 
                 if (slider) {
-                    rc = xmlTextWriterWriteFormatRaw(writer, "%.*s",
+                    rc = xmlTextWriterWriteFormatElement(writer,
+                            BAD_CAST element, "%.*s",
                             (int) (slider - token), token);
                     slider++;
                 }
                 else {
-                    rc = xmlTextWriterWriteFormatRaw(writer, "%s", token);
+                    rc = xmlTextWriterWriteFormatElement(writer,
+                            BAD_CAST element, "%s", token);
                 }
 
             }
@@ -1092,7 +1034,7 @@ static apr_status_t icalvalue_to_xml(ap_filter_t *f, icalvalue *val,
         case ICAL_UTCOFFSET_VALUE:
         {
             char *str = icalvalue_as_ical_string_r(val);
-            rc = xmlTextWriterWriteFormatRaw(writer, "%s", str);
+            rc = xmlTextWriterWriteFormatString(writer, "%s", str);
             icalmemory_free_buffer(str);
 
             break;
@@ -1105,7 +1047,7 @@ static apr_status_t icalvalue_to_xml(ap_filter_t *f, icalvalue *val,
                 return APR_EGENERAL;
             }
 
-            rc = xmlTextWriterWriteFormatRaw(writer, "%f", geo.lat);
+            rc = xmlTextWriterWriteFormatString(writer, "%f", geo.lat);
             if (rc < 0) {
                 return APR_EGENERAL;
             }
@@ -1120,7 +1062,7 @@ static apr_status_t icalvalue_to_xml(ap_filter_t *f, icalvalue *val,
                 return APR_EGENERAL;
             }
 
-            rc = xmlTextWriterWriteFormatRaw(writer, "%f", geo.lon);
+            rc = xmlTextWriterWriteFormatString(writer, "%f", geo.lon);
             if (rc < 0) {
                 return APR_EGENERAL;
             }
@@ -1135,7 +1077,7 @@ static apr_status_t icalvalue_to_xml(ap_filter_t *f, icalvalue *val,
         case ICAL_TEXT_VALUE: {
             /* we explicitly don't escape text here */
             const char* text = icalvalue_get_text(val);
-            rc = xmlTextWriterWriteFormatRaw(writer, "%s", text);
+            rc = xmlTextWriterWriteFormatString(writer, "%s", text);
 
             break;
         }
@@ -1147,7 +1089,7 @@ static apr_status_t icalvalue_to_xml(ap_filter_t *f, icalvalue *val,
                 return APR_EGENERAL;
             }
 
-            rc = xmlTextWriterWriteFormatRaw(writer, "%s",
+            rc = xmlTextWriterWriteFormatString(writer, "%s",
                     icalenum_reqstat_code(requeststatus.code));
             if (rc < 0) {
                 return APR_EGENERAL;
@@ -1163,7 +1105,7 @@ static apr_status_t icalvalue_to_xml(ap_filter_t *f, icalvalue *val,
                 return APR_EGENERAL;
             }
 
-            rc = xmlTextWriterWriteFormatRaw(writer, "%s", requeststatus.desc);
+            rc = xmlTextWriterWriteFormatString(writer, "%s", requeststatus.desc);
             if (rc < 0) {
                 return APR_EGENERAL;
             }
@@ -1180,7 +1122,7 @@ static apr_status_t icalvalue_to_xml(ap_filter_t *f, icalvalue *val,
                     return APR_EGENERAL;
                 }
 
-                rc = xmlTextWriterWriteFormatRaw(writer, "%s",
+                rc = xmlTextWriterWriteFormatString(writer, "%s",
                         requeststatus.debug);
                 if (rc < 0) {
                     return APR_EGENERAL;
@@ -1239,14 +1181,14 @@ static apr_status_t icalvalue_to_xml(ap_filter_t *f, icalvalue *val,
         }
         case ICAL_DURATION_VALUE: {
             struct icaldurationtype duration = icalvalue_get_duration(val);
-            rc = xmlTextWriterWriteFormatRaw(writer, "%s",
+            rc = xmlTextWriterWriteFormatString(writer, "%s",
                     icaldurationtype_as_ical_string(duration));
 
             break;
         }
         case ICAL_X_VALUE: {
             const char* x = icalvalue_get_x(val);
-            rc = xmlTextWriterWriteFormatRaw(writer, "%s", x);
+            rc = xmlTextWriterWriteFormatString(writer, "%s", x);
             break;
         }
         case ICAL_RECUR_VALUE: {
@@ -1273,14 +1215,14 @@ static apr_status_t icalvalue_to_xml(ap_filter_t *f, icalvalue *val,
         }
         case ICAL_DATE_VALUE: {
             struct icaltimetype date = icalvalue_get_date(val);
-            rc = xmlTextWriterWriteFormatRaw(writer, "%04d-%02d-%02d",
+            rc = xmlTextWriterWriteFormatString(writer, "%04d-%02d-%02d",
                     date.year, date.month, date.day);
 
             break;
         }
         case ICAL_DATETIME_VALUE: {
             struct icaltimetype datetime = icalvalue_get_datetime(val);
-            rc = xmlTextWriterWriteFormatRaw(writer, "%04d-%02d-%02dT%02d:%02d:%02d",
+            rc = xmlTextWriterWriteFormatString(writer, "%04d-%02d-%02dT%02d:%02d:%02d",
                     datetime.year, datetime.month, datetime.day, datetime.hour,
                     datetime.minute, datetime.second);
 
@@ -1289,7 +1231,7 @@ static apr_status_t icalvalue_to_xml(ap_filter_t *f, icalvalue *val,
         default: {
             /* if we don't recognise it, write it as a string */
             char *str = icalvalue_as_ical_string_r(val);
-            rc = xmlTextWriterWriteFormatRaw(writer, "%s", str);
+            rc = xmlTextWriterWriteFormatString(writer, "%s", str);
             icalmemory_free_buffer(str);
 
             break;
@@ -1372,25 +1314,13 @@ static apr_status_t icalparameter_to_xml(ap_filter_t *f, icalparameter *param,
             element = apr_pstrdup(f->r->pool,
                     icalparameter_kind_to_string(kind));
         }
-
-        /* open parameter element */
         element = strlwr(element);
-        rc = xmlTextWriterStartElement(writer, BAD_CAST
-                element);
-        if (rc < 0) {
-            return APR_EGENERAL;
-        }
 
         /* write parameter */
         str = icalparameter_get_xvalue(param);
         if (str) {
-            rc = xmlTextWriterWriteFormatRaw(writer, "%s", str);
-        }
-
-        /* close parameter element */
-        rc = xmlTextWriterEndElement(writer);
-        if (rc < 0) {
-            return APR_EGENERAL;
+            rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST
+                    element, "%s", str);
         }
 
     }
@@ -1534,7 +1464,8 @@ static apr_status_t icalproperty_to_xml(ap_filter_t *f, icalproperty *prop,
         case ICAL_FREEBUSY_PROPERTY:
         case ICAL_EXDATE_PROPERTY:
         case ICAL_RDATE_PROPERTY: {
-            rv = icalvalue_multi_to_xml(f, icalproperty_get_value(prop), writer);
+            rv = icalvalue_multi_to_xml(f,
+                    icalproperty_get_value(prop), writer);
             if (rv != APR_SUCCESS) {
                 return rv;
             }

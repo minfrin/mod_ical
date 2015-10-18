@@ -1,6 +1,10 @@
 
 Changes with v0.0.2
 
+  *) Simplify the XML processing through the use of
+     xmlTextWriterWriteFormatString(), ensure XML is properly escaped.
+     [Graham Leggett <minfrin@sharp.fm>]
+
   *) We change the content type, therefore we are a resource filter.
      [Graham Leggett <minfrin@sharp.fm>]
 
