@@ -2146,16 +2146,19 @@ static apr_status_t ical_out_filter(ap_filter_t *f, apr_bucket_brigade *bb)
 
     /* first time in? create a parser */
     if (!ctx->parser) {
-        const char *ct;
 
         /* sanity check - input must be text/calendar or fail */
-        ct = ap_field_noparam(r->pool, r->content_type);
-        if (!ct || strcasecmp(ct, "text/calendar")) {
-            ap_log_rerror(APLOG_MARK, APLOG_WARNING, APR_SUCCESS, r,
-                    "unexpected content-type '%s', %s filter needs 'text/calendar', filter disabled",
-                    ct, f->frec->name);
-            ap_remove_output_filter(f);
-            return ap_pass_brigade(f->next, bb);
+        if (ctx->output == AP_ICAL_OUTPUT_NEGOTIATED) {
+            const char *ct;
+            ct = ap_field_noparam(r->pool,
+                    apr_table_get(r->headers_out, "Content-Type"));
+            if (!ct || strcasecmp(ct, "text/calendar")) {
+                ap_log_rerror(APLOG_MARK, APLOG_WARNING, APR_SUCCESS, r,
+                        "unexpected content-type '%s', %s filter needs 'text/calendar', filter disabled",
+                        ct, f->frec->name);
+                ap_remove_output_filter(f);
+                return ap_pass_brigade(f->next, bb);
+            }
         }
 
         ctx->bb = apr_brigade_create(r->pool, f->c->bucket_alloc);

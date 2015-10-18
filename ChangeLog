@@ -1,6 +1,9 @@
 
 Changes with v0.0.2
 
+  *) Limit the sanity check for non calendar content to the negotiated
+     ICAL filter only. [Graham Leggett <minfrin@sharp.fm>]
+
   *) Fix a segfault when the filter steps out of the way of non calendar
      content. [Graham Leggett <minfrin@sharp.fm>]
 
