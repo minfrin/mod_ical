@@ -1,6 +1,10 @@
 
 Changes with v0.0.2
 
+  *) Make sure we handle a missing Accept header, and ensure if we
+     negotiate on Accept we add to it Vary.
+     [Graham Leggett <minfrin@sharp.fm>]
+
   *) Simplify the XML processing through the use of
      xmlTextWriterWriteFormatString(), ensure XML is properly escaped.
      [Graham Leggett <minfrin@sharp.fm>]

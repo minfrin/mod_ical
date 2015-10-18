@@ -2103,7 +2103,11 @@ static apr_status_t ical_out_filter(ap_filter_t *f, apr_bucket_brigade *bb)
         if (ctx->output == AP_ICAL_OUTPUT_NEGOTIATED) {
             const char *accept = apr_table_get(r->headers_in, "Accept");
 
-            if (!strcmp(accept, "text/calendar")) {
+            if (!accept) {
+                /* fall back to text/calendar by default */
+                ctx->output = AP_ICAL_OUTPUT_ICAL;
+            }
+            else if (!strcmp(accept, "text/calendar")) {
                 ctx->output = AP_ICAL_OUTPUT_ICAL;
             }
             else if (!strcmp(accept, "application/calendar+xml")) {
@@ -2116,6 +2120,7 @@ static apr_status_t ical_out_filter(ap_filter_t *f, apr_bucket_brigade *bb)
                 /* fall back to text/calendar by default */
                 ctx->output = AP_ICAL_OUTPUT_ICAL;
             }
+            apr_table_merge(r->headers_out, "Vary", "Accept");
         }
 
         /* type of filtering/formatting to do */
