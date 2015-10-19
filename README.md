@@ -21,8 +21,8 @@ development.
 - Convert **RFC5545 iCalendar** streams into **RFC7265 jCal** JSON
   streams.
 
-- Control filtering and formatting based on optional URL query
-  parameters.
+- Control filtering, formatting and timezone conversion  based on
+  optional URL query parameters.
 
 
 ### Filtering
@@ -66,7 +66,23 @@ through the use of the following filters:
   the client is not able to control the Accept header.
 
 
+### Timezones
+
+The default timezone of the calendar can be changed on the fly by
+providing either an ICalTimezone directive or a "tz" parameter containing
+the [Olson city] name.
+
+All date and date-time values in the calendar will be updated to the
+new timezone appropriately.
+
+This can be used to ensure that dates published to a web application are
+consistent regardless of the timezone setting of the backend calendar.
+
+
 ### Configuration Directives
+
+- **ICalTimezone**: Override the timezone on the calendar to the given
+  location, for example Europe/London.
 
 - **ICalFilter**: Set the filtering to 'none', 'next', 'last', future'
   or 'past'. Defaults to 'past'.
@@ -80,13 +96,16 @@ through the use of the following filters:
 The configuration directives above can be overridden on a per URL
 basis by the addition of the following optional query parameters:
 
+- **tz**: Override the timezone on the calendar to the given
+  location, for example Europe/London.
+
 - **filter**: Set the filtering to 'none', 'next', 'last', future'
   or 'past'.
 
 - **format**: Set the formatting to 'none', 'spaced' or 'pretty'.
 
 ```
-http://example.com/calendars/upcoming-events.ics?filter=next&format=pretty
+http://example.com/calendars/upcoming-events.ics?tz=Europe/London&filter=next&format=pretty
 ```
 
 
@@ -155,7 +174,7 @@ For more advanced configurations, see the **mod_filter** documentation for
 
 ### Version
 
-0.0.2: Bugfix release.
+0.0.3: Feature release.
 
 
 ### Bugs
@@ -183,3 +202,5 @@ mod_ical depends on:
   [libical]: <https://github.com/libical/libical>
   [libxml2]: <http://www.xmlsoft.org/>
   [json-c]: <https://github.com/json-c/json-c/wiki>
+  [Olson city]: <https://en.wikipedia.org/wiki/Tz_database>
+
