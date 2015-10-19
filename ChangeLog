@@ -1,6 +1,9 @@
 
 Changes with v0.0.3
 
+  *) Add autoheader support. Teach autoconf to find both json.h and
+     json-c/json.h.  [Graham Leggett <minfrin@sharp.fm>]
+
   *) Add support for the ICalTimezone directive and tz query string
      parameter allowing the timezone of a calendar to be overridden.
      [Graham Leggett <minfrin@sharp.fm>]

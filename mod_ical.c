@@ -32,6 +32,13 @@
 #include "apr_strings.h"
 #include "apr_lib.h"
 
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
+#include "config.h"
+
 #include <libical/ical.h>
 #include <libical/icalclassify.h>
 #include <libical/icalrecur.h>
@@ -39,7 +46,13 @@
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 
+#ifdef HAVE_JSON_C_JSON_H
 #include <json-c/json.h>
+#endif
+#ifdef HAVE_JSON_H
+#include <json.h>
+#endif
+
 
 #include <string.h>
 
