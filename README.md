@@ -125,6 +125,30 @@ AcceptPathInfo on
 </If>
 ```
 
+The following is an example of an XSLT stylesheet that could be used in
+the example above:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xcal="urn:ietf:params:xml:ns:icalendar-2.0" xmlns:date="http://exslt.org/dates-and-times" xmlns="http://www.w3.org/1999/xhtml" version="1.
+0">
+<xsl:output omit-xml-declaration="yes" method="html"/>
+<xsl:template match="/xcal:icalendar">
+  <xsl:for-each select="xcal:vcalendar/xcal:components/xcal:vevent">
+    <xsl:choose>
+      <xsl:when test="xcal:properties/xcal:url">
+        <h3 class="vevent"><strong><xsl:text>Join us for </xsl:text><a class="summary"><xsl:attribute name="href"><xsl:value-of select="xcal:properties/xcal:url/xcal:uri"/></xsl:attribute><xsl:value-of select="xcal:properties/xcal:summary/xcal:text"/></a></strong><xsl:text> on </xsl:text><span class="dtstart"><xsl:attribute name="title"><xsl:value-of select="xcal:properties/xcal:dtstart/xcal:date-time"/></xsl:attribute><xsl:value-of select="date:day-in-month(xcal:properties/xcal:dtstart/xcal:date-time)"/><xsl:text> </xsl:text><xsl:value-of select="date:month-name(xcal:properties/xcal:dtstart/xcal:date-time)"/><xsl:text> at </xsl:text><xsl:value-of select="substring(date:time(xcal:properties/xcal:dtstart/xcal:date-time),0,6)"/></span><xsl:text> </xsl:text><span class="description"><xsl:value-of select="xcal:properties/xcal:description/xcal:text"/></span></h3>
+      </xsl:when>
+      <xsl:otherwise>
+        <h3 class="vevent"><strong><xsl:text>Join us for </xsl:text><span class="summary"><xsl:value-of select="xcal:properties/xcal:summary/xcal:text"/></span></strong><xsl:text> on </xsl:text><span class="dtstart"><xsl:attribute name="title"><xsl:value-of select="xcal:properties/xcal:dtstart/xcal:date-time"/></xsl:attribute><xsl:value-of select="date:day-in-month(xcal:properties/xcal:dtstart/xcal:date-time)"/><xsl:text> </xsl:text><xsl:value-of select="date:month-name(xcal:properties/xcal:dtstart/xcal:date-time)"/><xsl:text> at </xsl:text><xsl:value-of select="substring(date:time(xcal:properties/xcal:dtstart/xcal:date-time),0,6)"/></span><xsl:text> </xsl:text><span class="description"><xsl:value-of select="xcal:properties/xcal:description/xcal:text"/></span></h3>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:for-each>
+
+</xsl:template>
+</xsl:stylesheet>
+```
+
 For more advanced configurations, see the **mod_filter** documentation for
 [Apache httpd].
 
