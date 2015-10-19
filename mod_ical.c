@@ -1300,7 +1300,7 @@ static apr_status_t icalparameter_to_json(ap_filter_t *f, icalparameter *param,
 
         /* write parameter */
         str = icalparameter_get_xvalue(param);
-        if (str) {
+        if (element && str) {
             json_object_object_add(jobject, strlwr(element),
                     json_object_new_string(str));
         }
@@ -1339,7 +1339,7 @@ static apr_status_t icalparameter_to_xml(ap_filter_t *f, icalparameter *param,
 
         /* write parameter */
         str = icalparameter_get_xvalue(param);
-        if (str) {
+        if (element && str) {
             rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST
                     element, "%s", str);
         }
