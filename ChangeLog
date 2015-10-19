@@ -1,6 +1,9 @@
 
 Changes with v0.0.3
 
+  *) Add support for the ICalTimezone directive and tz query string
+     parameter allowing the timezone of a calendar to be overridden.
+     [Graham Leggett <minfrin@sharp.fm>]
 
 Changes with v0.0.2
 

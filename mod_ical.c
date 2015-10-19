@@ -80,6 +80,7 @@ typedef struct ical_ctx {
     apr_bucket_brigade *bb;
     apr_bucket_brigade *tmp;
     icalparser *parser;
+    icaltimezone *tz;
     int seen_eol;
     int eat_crlf;
     int seen_eos;
@@ -89,8 +90,10 @@ typedef struct ical_ctx {
 } ical_ctx;
 
 typedef struct ical_conf {
+    unsigned int timezone_set:1; /* has timezone been set */
     unsigned int filter_set:1; /* has filtering been set */
     unsigned int format_set:1; /* has formatting been set */
+    icaltimezone *timezone; /* override the timezone */
     ap_ical_filter_e filter; /* type of filtering */
     ap_ical_format_e format; /* type of formatting */
 } ical_conf;
@@ -133,10 +136,15 @@ static apr_status_t xmlwriter_cleanup(void *data)
 static char *strlwr(char *str)
 {
     apr_size_t i;
-    apr_size_t len = strlen(str);
+    apr_size_t len;
 
-    for (i = 0; i < len; i++)
-        str[i] = apr_tolower((unsigned char) str[i]);
+    if (str) {
+        len = strlen(str);
+
+        for (i = 0; i < len; i++)
+            str[i] = apr_tolower((unsigned char) str[i]);
+
+    }
 
     return str;
 }
@@ -1780,6 +1788,163 @@ static ap_ical_format_e parse_format(const char *arg, apr_off_t len)
     }
 }
 
+static icalcomponent *timezone_component(ap_filter_t *f, icalcomponent *comp,
+        icaltimezone *oldtz)
+{
+    ical_ctx *ctx = f->ctx;
+
+    if (comp && ctx->tz) {
+        icalcomponent *scomp, *oldtcomp = NULL, *newtcomp = NULL;
+        icalproperty *sprop;
+
+        /* handle properties */
+        sprop = icalcomponent_get_first_property(comp, ICAL_ANY_PROPERTY);
+        if (sprop) {
+
+            while (sprop) {
+                icalparameter *sparam;
+                icaltimezone *overridetz = oldtz;
+
+                /* handle parameters */
+                sparam = icalproperty_get_first_parameter(sprop,
+                        ICAL_ANY_PARAMETER);
+                if (sparam) {
+
+                    while (sparam) {
+                        icalparameter_kind pkind = icalparameter_isa(sparam);
+
+                        switch (pkind) {
+                        case ICAL_TZID_PARAMETER: {
+
+                            /* identify original timezone */
+                            const char *str = icalparameter_get_xvalue(sparam);
+                            if (str) {
+                                icaltimezone *tz;
+                                /* first, try read the TZID, and if that fails,
+                                 * treat it as a location.
+                                 */
+                                tz =
+                                        icaltimezone_get_builtin_timezone_from_tzid(
+                                                str);
+                                if (tz) {
+                                    icalparameter_set_xvalue(sparam,
+                                            icaltimezone_get_tzid(ctx->tz));
+                                }
+                                else {
+                                    tz = icaltimezone_get_builtin_timezone(
+                                            str);
+                                    if (tz) {
+                                        icalparameter_set_xvalue(sparam,
+                                                icaltimezone_get_tzid(ctx->tz));
+                                    }
+                                }
+                                if (tz) {
+                                    overridetz = tz;
+                                }
+                            }
+
+                            break;
+                        }
+                        default: {
+                            break;
+                        }
+                        }
+
+                        sparam = icalproperty_get_next_parameter(sprop,
+                                ICAL_ANY_PARAMETER);
+                    }
+
+                }
+
+                if (overridetz) {
+                    icalvalue *svalue;
+
+                    /* handle value */
+                    svalue = icalproperty_get_value(sprop);
+                    if (svalue) {
+                        icalvalue_kind vkind = icalvalue_isa(svalue);
+
+                        switch (vkind) {
+                        case ICAL_DATETIMEPERIOD_VALUE: {
+
+                            struct icaldatetimeperiodtype dtp =
+                                    icalvalue_get_datetimeperiod(svalue);
+                            if (!icaltime_is_null_time(dtp.time)) {
+                                icaltime_set_timezone(&dtp.time, overridetz);
+                                icalvalue_set_datetime(svalue,
+                                        icaltime_convert_to_zone(dtp.time,
+                                                ctx->tz));
+                            }
+
+                            break;
+                        }
+                        case ICAL_DATETIME_VALUE: {
+
+                            struct icaltimetype datetime = icalvalue_get_datetime(
+                                    svalue);
+                            icaltime_set_timezone(&datetime, overridetz);
+                            icalvalue_set_datetime(svalue,
+                                    icaltime_convert_to_zone(datetime, ctx->tz));
+
+                            break;
+                        }
+                        default: {
+                            break;
+                        }
+                        }
+                    }
+
+                }
+
+                sprop = icalcomponent_get_next_property(comp,
+                        ICAL_ANY_PROPERTY);
+            }
+
+        }
+
+        /* handle components */
+        scomp = icalcomponent_get_first_component(comp, ICAL_ANY_COMPONENT);
+        if (scomp) {
+
+            while (scomp) {
+
+                icalcomponent_kind ckind = icalcomponent_isa(scomp);
+
+                if (ckind == ICAL_VTIMEZONE_COMPONENT) {
+                    /* identify existing timezone */
+                    oldtcomp = scomp;
+                    if (!oldtz) {
+                        oldtz = icaltimezone_new();
+                        icaltimezone_set_component(oldtz, scomp);
+                    }
+                }
+                else {
+                    /* handle nested components */
+                    timezone_component(f, scomp, oldtz);
+                }
+                scomp = icalcomponent_get_next_component(comp,
+                        ICAL_ANY_COMPONENT);
+
+            }
+        }
+
+        /* remove old timezone, replace with new timezone */
+        if (oldtcomp) {
+
+            icalcomponent_remove_component(comp, oldtcomp);
+            icalcomponent_free(oldtcomp);
+
+            newtcomp = icaltimezone_get_component(icaltimezone_copy(ctx->tz));
+            icalcomponent_add_component(comp, newtcomp);
+
+        }
+
+    }
+
+    return comp;
+
+}
+
 static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
 {
     ical_ctx *ctx = f->ctx;
@@ -1951,6 +2116,7 @@ static apr_status_t ical_query(ap_filter_t *f)
     ical_conf *conf = ap_get_module_config(f->r->per_dir_config,
             &ical_module);
 
+    ctx->tz = conf->timezone;
     ctx->filter = conf->filter;
     ctx->format = conf->format;
 
@@ -1992,6 +2158,14 @@ static apr_status_t ical_query(ap_filter_t *f)
                 }
 
             }
+
+            if (!strncmp(key, "tz", klen)) {
+
+                ctx->tz = icaltimezone_get_builtin_timezone(
+                        apr_pstrndup(f->r->pool, val, vlen));
+
+            }
+
 
         }
 
@@ -2143,7 +2317,8 @@ static apr_status_t ical_out_filter(ap_filter_t *f, apr_bucket_brigade *bb)
         if (APR_BUCKET_IS_EOS(e)) {
 
             /* handle last line */
-            comp = filter_component(f, add_line(f, ctx));
+            comp = filter_component(f,
+                    timezone_component(f, add_line(f, ctx), NULL));
             if (comp) {
 
                 rv = ical_write(f, comp);
@@ -2217,7 +2392,8 @@ static apr_status_t ical_out_filter(ap_filter_t *f, apr_bucket_brigade *bb)
 
                 /* process the line */
                 else if (!APR_BRIGADE_EMPTY(ctx->tmp)) {
-                    comp = filter_component(f, add_line(f, ctx));
+                    comp = filter_component(f,
+                            timezone_component(f, add_line(f, ctx), NULL));
                     if (comp) {
 
                         rv = ical_write(f, comp);
@@ -2280,12 +2456,30 @@ static void *merge_ical_config(apr_pool_t *p, void *basev, void *addv)
     ical_conf *add = (ical_conf *) addv;
     ical_conf *base = (ical_conf *) basev;
 
+    new->timezone = (add->timezone_set == 0) ? base->timezone : add->timezone;
+    new->timezone_set = add->timezone_set || base->timezone_set;
     new->filter = (add->filter_set == 0) ? base->filter : add->filter;
     new->filter_set = add->filter_set || base->filter_set;
     new->format = (add->format_set == 0) ? base->format : add->format;
     new->format_set = add->format_set || base->format_set;
 
     return new;
+}
+
+static const char *set_ical_timezone(cmd_parms *cmd, void *dconf,
+        const char *arg)
+{
+    ical_conf *conf = dconf;
+
+    conf->timezone = icaltimezone_get_builtin_timezone(arg);
+
+    if (!conf->timezone) {
+        return "IcalTimezone was not recognised as a valid location";
+    }
+
+    conf->timezone_set = 1;
+
+    return NULL;
 }
 
 static const char *set_ical_filter(cmd_parms *cmd, void *dconf, const char *arg)
@@ -2319,6 +2513,8 @@ static const char *set_ical_format(cmd_parms *cmd, void *dconf, const char *arg)
 }
 
 static const command_rec ical_cmds[] = {
+    AP_INIT_TAKE1("ICalTimezone", set_ical_timezone, NULL, ACCESS_CONF,
+        "Override the timezone on the calendar to the given location, for example Europe/London"),
     AP_INIT_TAKE1("ICalFilter", set_ical_filter, NULL, ACCESS_CONF,
         "Set the filtering to 'none', 'next', 'last', future' or 'past'. Defaults to 'past'"),
     AP_INIT_TAKE1("ICalFormat", set_ical_format, NULL, ACCESS_CONF,
