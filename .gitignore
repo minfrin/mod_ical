@@ -3,6 +3,7 @@
 *.slo
 Makefile
 *.spec
+config.h
 
 # http://www.gnu.org/software/automake
 
