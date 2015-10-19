@@ -105,6 +105,26 @@ LoadModule ical_module modules/mod_ical.so
 </Location>
 ```
 
+Using an additional PATH_INFO at the end of the calendar URL, explicit
+filters can be assigned to each URL as follows:
+
+```
+AcceptPathInfo on
+
+# create a dedicated JSON view
+# http://example.com/breaking-news.ics/json
+<If "%{PATH_INFO} =~ /json/">
+  SetOutputFilter ICALJCAL
+</If>
+# create a news view, passed through XSLT
+# http://example.com/breaking-news.ics/news
+<If "%{PATH_INFO} =~ /news/">
+  SetOutputFilter ICALXCAL;XSLT
+  TransformOptions +ApacheFS +XIncludes
+  TransformSet /news.xsl
+</If>
+```
+
 For more advanced configurations, see the **mod_filter** documentation for
 [Apache httpd].
 
