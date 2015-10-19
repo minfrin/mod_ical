@@ -6,6 +6,7 @@ AC_INIT(mod_ical, 0.0.3, minfrin@sharp.fm)
 AM_INIT_AUTOMAKE([dist-bzip2])
 AC_CONFIG_FILES([Makefile mod_ical.spec])
 AC_CONFIG_SRCDIR([mod_ical.c])
+AC_CONFIG_HEADER(config.h)
 
 # Checks for programs.
 AC_PROG_CC
@@ -42,9 +43,7 @@ CPPFLAGS="$CPPFLAGS $apr_CPPFLAGS $apu_CPPFLAGS $libical_CPPFLAGS $libxml_CPPFLA
 LDFLAGS="$LDFLAGS $apr_LIBS $apu_LIBS $libical_LIBS $libxml_LIBS $jsonc_LIBS"
 
 # Checks for header files.
-AC_CHECK_HEADER(libical/ical.h)
-AC_CHECK_HEADER(libxml/encoding.h)
-AC_CHECK_HEADER(json-c/json.h)
+AC_CHECK_HEADERS(libical/ical.h libxml/encoding.h json-c/json.h json.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
