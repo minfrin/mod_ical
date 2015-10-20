@@ -1,4 +1,7 @@
 
+Changes with v0.0.4
+
+
 Changes with v0.0.3
 
   *) Add autoheader support. Teach autoconf to find both json.h and
