@@ -1,4 +1,7 @@
 
+Changes with v0.0.5
+
+
 Changes with v0.0.4
 
   *) Fix an attempt to free up the icalcomponents twice. We free the

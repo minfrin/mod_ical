@@ -1,8 +1,13 @@
+mod-ical (0.0.5) stable; urgency=low
+
+  * Bugfix Release.
+
+ -- Graham Leggett <minfrin@sharp.fm>  Thu, 26 Nov 2015 23:00:00 +0000
 mod-ical (0.0.4) stable; urgency=low
 
   * Bugfix Release.
 
- -- Graham Leggett <minfrin@sharp.fm>  Mon, 19 Oct 2015 23:00:00 +0000
+ -- Graham Leggett <minfrin@sharp.fm>  Thu, 26 Nov 2015 23:00:00 +0000
 mod-ical (0.0.3) stable; urgency=low
 
   * Feature Release.
