@@ -118,13 +118,6 @@ static apr_status_t icalparser_cleanup(void *data)
     return APR_SUCCESS;
 }
 
-static apr_status_t icalcomponent_cleanup(void *data)
-{
-    icalcomponent *comp = data;
-    icalcomponent_free(comp);
-    return APR_SUCCESS;
-}
-
 static apr_status_t jsonbuffer_cleanup(void *data)
 {
     json_object *buf = data;
@@ -2068,7 +2061,6 @@ static icalcomponent *add_line(ap_filter_t *f, ical_ctx *ctx)
     char *buffer;
     apr_off_t actual;
     apr_size_t total;
-    icalcomponent *comp;
 
     /* flatten the brigade, terminate with NUL */
     apr_brigade_length(ctx->tmp, 1, &actual);
@@ -2081,15 +2073,7 @@ static icalcomponent *add_line(ap_filter_t *f, ical_ctx *ctx)
     apr_brigade_cleanup(ctx->tmp);
 
     /* handle line in ctx->tmp */
-    comp = icalparser_add_line(ctx->parser, buffer);
-
-    /* clean up the component */
-    if (comp) {
-        apr_pool_cleanup_register(f->r->pool, comp, icalcomponent_cleanup,
-                apr_pool_cleanup_null);
-    }
-
-    return comp;
+    return icalparser_add_line(ctx->parser, buffer);
 }
 
 static apr_status_t ical_header(ap_filter_t *f)
@@ -2344,7 +2328,8 @@ static apr_status_t ical_out_filter(ap_filter_t *f, apr_bucket_brigade *bb)
                     return rv;
                 }
 
-                apr_pool_cleanup_run(f->r->pool, comp, icalcomponent_cleanup);
+                apr_pool_cleanup_run(f->r->pool, ctx->parser, icalparser_cleanup);
+                ctx->parser = NULL;
             }
 
             /* pass the EOS across */
@@ -2415,8 +2400,6 @@ static apr_status_t ical_out_filter(ap_filter_t *f, apr_bucket_brigade *bb)
                         }
 
                         rv = ap_pass_brigade(f->next, ctx->bb);
-                        apr_pool_cleanup_run(f->r->pool, comp,
-                                icalcomponent_cleanup);
                     }
                     continue;
                 }

@@ -1,6 +1,8 @@
 
 Changes with v0.0.4
 
+  *) Fix an attempt to free up the icalcomponents twice. We free the
+     icalparser instead. [Graham Leggett <minfrin@sharp.fm>]
 
 Changes with v0.0.3
 
