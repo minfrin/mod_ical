@@ -1,6 +1,8 @@
 
 Changes with v0.0.5
 
+  *) Fix the next and last options so that discarded candidates
+     don't remain in the calendar. [Graham Leggett <minfrin@sharp.fm>]
 
 Changes with v0.0.4
 

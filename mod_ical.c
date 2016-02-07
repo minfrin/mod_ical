@@ -1964,7 +1964,9 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
         struct icaltimetype now = icaltime_current_time_with_zone(
                 icaltimezone_get_utc_timezone());
 
-        while ((scomp = icalcompiter_next(&iter))) {
+        while ((scomp = icalcompiter_deref(&iter))) {
+
+            icalcompiter_next(&iter);
 
             switch (ctx->filter) {
             case AP_ICAL_FILTER_NEXT: {
@@ -1972,7 +1974,6 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
 
                 /* in the past? */
                 if (icaltime_compare(now, end) > 0) {
-                    icalcompiter_next(&iter);
                     icalcomponent_remove_component(comp, scomp);
                     icalcomponent_free(scomp);
                     break;
@@ -1982,14 +1983,22 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
                 if (candidate) {
                     if (icaltime_compare(end,
                             icalcomponent_get_dtend(candidate)) < 0) {
-                        icalcompiter_next(&iter);
+                        /* yes - blow away the old candidate */
                         icalcomponent_remove_component(comp, candidate);
                         icalcomponent_free(candidate);
+                        candidate = scomp;
+                    }
+                    else {
+                        /* no - blow away the contender */
+                        icalcomponent_remove_component(comp, scomp);
+                        icalcomponent_free(scomp);
                     }
                 }
+                else {
+                    /* we are now the best candidate */
+                    candidate = scomp;
+                }
 
-                /* we are now the best candidate */
-                candidate = scomp;
                 break;
             }
             case AP_ICAL_FILTER_LAST: {
@@ -1997,7 +2006,6 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
 
                 /* in the future? */
                 if (icaltime_compare(now, end) < 0) {
-                    icalcompiter_next(&iter);
                     icalcomponent_remove_component(comp, scomp);
                     icalcomponent_free(scomp);
                     break;
@@ -2007,14 +2015,22 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
                 if (candidate) {
                     if (icaltime_compare(end,
                             icalcomponent_get_dtend(candidate)) > 0) {
-                        icalcompiter_next(&iter);
+                        /* yes - blow away the old candidate */
                         icalcomponent_remove_component(comp, candidate);
                         icalcomponent_free(candidate);
+                        candidate = scomp;
+                    }
+                    else {
+                        /* no - blow away the contender */
+                        icalcomponent_remove_component(comp, scomp);
+                        icalcomponent_free(scomp);
                     }
                 }
+                else {
+                    /* we are now the best candidate */
+                    candidate = scomp;
+                }
 
-                /* we are now the best candidate */
-                candidate = scomp;
                 break;
             }
             case AP_ICAL_FILTER_FUTURE: {
@@ -2022,7 +2038,6 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
 
                 /* in the past? */
                 if (icaltime_compare(now, end) > 0) {
-                    icalcompiter_next(&iter);
                     icalcomponent_remove_component(comp, scomp);
                     icalcomponent_free(scomp);
                     break;
@@ -2035,7 +2050,6 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
 
                 /* in the future? */
                 if (icaltime_compare(now, end) < 0) {
-                    icalcompiter_next(&iter);
                     icalcomponent_remove_component(comp, scomp);
                     icalcomponent_free(scomp);
                     break;
