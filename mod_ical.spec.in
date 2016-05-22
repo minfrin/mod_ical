@@ -7,7 +7,7 @@ Summary:   Apache mod_ical module
 License:   ASL 2.0
 Group:     System Environment/Daemons
 Source:    https://github.com/minfrin/%{name}/releases/download/%{name}-%{version}/%{name}-%{version}.tar.bz2
-BuildRequires: pkgconfig(apr-1), pkgconfig(apr-util-1), httpd-devel, libical-devel, json-c-devel, libxml2-devel
+BuildRequires: gcc, pkgconfig(apr-1), pkgconfig(apr-util-1), httpd-devel, libical-devel, json-c-devel, libxml2-devel
 Requires: httpd
 
 %description
