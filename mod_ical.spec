@@ -3,7 +3,7 @@
 Name:      mod_ical
 Version:   0.0.6
 Release:   1%{?dist}
-Summary:   Apache mod_ical module
+Summary:   Apache iCal/jCal/xCal filter module
 License:   ASL 2.0
 Group:     System Environment/Daemons
 Source:    https://github.com/minfrin/%{name}/releases/download/%{name}-%{version}/%{name}-%{version}.tar.bz2
