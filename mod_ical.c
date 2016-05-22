@@ -1975,7 +1975,6 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
                 /* in the past? */
                 if (icaltime_compare(now, end) > 0) {
                     icalcomponent_remove_component(comp, scomp);
-                    icalcomponent_free(scomp);
                     break;
                 }
 
@@ -1985,13 +1984,11 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
                             icalcomponent_get_dtend(candidate)) < 0) {
                         /* yes - blow away the old candidate */
                         icalcomponent_remove_component(comp, candidate);
-                        icalcomponent_free(candidate);
                         candidate = scomp;
                     }
                     else {
                         /* no - blow away the contender */
                         icalcomponent_remove_component(comp, scomp);
-                        icalcomponent_free(scomp);
                     }
                 }
                 else {
@@ -2007,7 +2004,6 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
                 /* in the future? */
                 if (icaltime_compare(now, end) < 0) {
                     icalcomponent_remove_component(comp, scomp);
-                    icalcomponent_free(scomp);
                     break;
                 }
 
@@ -2017,13 +2013,11 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
                             icalcomponent_get_dtend(candidate)) > 0) {
                         /* yes - blow away the old candidate */
                         icalcomponent_remove_component(comp, candidate);
-                        icalcomponent_free(candidate);
                         candidate = scomp;
                     }
                     else {
                         /* no - blow away the contender */
                         icalcomponent_remove_component(comp, scomp);
-                        icalcomponent_free(scomp);
                     }
                 }
                 else {
@@ -2039,7 +2033,6 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
                 /* in the past? */
                 if (icaltime_compare(now, end) > 0) {
                     icalcomponent_remove_component(comp, scomp);
-                    icalcomponent_free(scomp);
                     break;
                 }
 
@@ -2051,7 +2044,6 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
                 /* in the future? */
                 if (icaltime_compare(now, end) < 0) {
                     icalcomponent_remove_component(comp, scomp);
-                    icalcomponent_free(scomp);
                     break;
                 }
 

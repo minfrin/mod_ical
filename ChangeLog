@@ -1,4 +1,8 @@
 
+Changes with v0.0.6
+
+  *) Remove an attempt to free icalcomponents twice. [Graham Leggett]
+
 Changes with v0.0.5
 
   *) Fix the next and last options so that discarded candidates
