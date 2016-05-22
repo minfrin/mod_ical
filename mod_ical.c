@@ -216,7 +216,6 @@ static apr_status_t icalduration_to_xml(const char *element,
         struct icaldurationtype duration, xmlTextWriterPtr writer)
 {
     apr_status_t rv = APR_SUCCESS;
-    int rc;
 
     /* write duration element */
     {
@@ -1307,7 +1306,6 @@ static apr_status_t icalparameter_to_xml(ap_filter_t *f, icalparameter *param,
         xmlTextWriterPtr writer)
 {
     apr_status_t rv = APR_SUCCESS;
-    int rc;
 
     if (param) {
         char *element;
