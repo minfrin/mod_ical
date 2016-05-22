@@ -27,7 +27,7 @@ RFC6321 xCal / RFC7265 jCal.
 %files
 %{_libdir}/httpd/modules/mod_ical.so
 
-%doc AUTHORS ChangeLog NEWS README
+%doc AUTHORS ChangeLog README.md
 %license COPYING
 
 %changelog
