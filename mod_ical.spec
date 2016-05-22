@@ -1,7 +1,7 @@
 # RPM Spec file for mod_ical
 
 Name:      mod_ical
-Version:   @PACKAGE_VERSION@
+Version:   0.0.6
 Release:   1%{?dist}
 Summary:   Apache mod_ical module
 License:   ASL v2.0
