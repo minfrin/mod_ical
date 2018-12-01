@@ -174,7 +174,7 @@ For more advanced configurations, see the **mod_filter** documentation for
 
 ### Version
 
-0.0.6: Bugfix release.
+0.0.7: Bugfix release.
 
 
 ### Bugs
