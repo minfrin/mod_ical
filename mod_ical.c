@@ -220,7 +220,7 @@ static apr_status_t icalduration_to_xml(const char *element,
     /* write duration element */
     {
         char *str = icaldurationtype_as_ical_string_r(duration);
-        rc = xmlTextWriterWriteFormatElement(writer,
+        xmlTextWriterWriteFormatElement(writer,
                 BAD_CAST element, "%s", str);
         icalmemory_free_buffer(str);
     }
@@ -1331,7 +1331,7 @@ static apr_status_t icalparameter_to_xml(ap_filter_t *f, icalparameter *param,
         /* write parameter */
         str = icalparameter_get_xvalue(param);
         if (element && str) {
-            rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST
+            xmlTextWriterWriteFormatElement(writer, BAD_CAST
                     element, "%s", str);
         }
 
