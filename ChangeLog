@@ -6,8 +6,8 @@ Changes with v0.0.8
      icalrecurrencetype_month_month are provided by libical.
      [Graham Leggett]
 
-  *) Depend on /usr/bin/apxs so that we can build on OpenSUSE.
-     [Graham Leggett]
+  *) Depend on httpd-devel / apache-devel / apache2-devel so that we
+     can build on OpenSUSE. [Graham Leggett]
 
 Changes with v0.0.7
 

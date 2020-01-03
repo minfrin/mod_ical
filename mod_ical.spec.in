@@ -8,8 +8,17 @@ License:   ASL 2.0
 Group:     System Environment/Daemons
 Source:    https://github.com/minfrin/%{name}/releases/download/%{name}-%{version}/%{name}-%{version}.tar.bz2
 Url:       https://github.com/minfrin/%{name}
-BuildRequires: gcc, /usr/bin/apxs, pkgconfig(apr-1), pkgconfig(apr-util-1), pkgconfig(libical), pkgconfig(json-c), pkgconfig(libxml-2.0)
+BuildRequires: gcc, pkgconfig(apr-1), pkgconfig(apr-util-1), pkgconfig(libical), pkgconfig(json-c), pkgconfig(libxml-2.0)
 Requires: httpd
+%if 0%{?is_opensuse}
+BuildRequires: apache2-devel
+%else
+%if 0%{?mgaversion}
+BuildRequires: apache-devel
+%else
+BuildRequires: httpd-devel
+%endif
+%endif
 
 %description
 The Apache mod_ical module provides a set of filters to
@@ -26,7 +35,11 @@ RFC6321 xCal / RFC7265 jCal.
 %make_install
 
 %files
+%if 0%{?is_opensuse}
+%{_libdir}/apache2/mod_ical.so
+%else
 %{_libdir}/httpd/modules/mod_ical.so
+%endif
 
 %doc AUTHORS ChangeLog README.md
 %license COPYING
