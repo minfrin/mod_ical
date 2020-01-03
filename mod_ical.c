@@ -155,6 +155,7 @@ static char *strlwr(char *str)
     return str;
 }
 
+#if !HAVE_ICALRECURRENCETYPE_MONTH_IS_LEAP
 static const char *icalrecur_weekday_to_string(icalrecurrencetype_weekday kind)
 {
     switch (kind) {
@@ -184,18 +185,25 @@ static const char *icalrecur_weekday_to_string(icalrecurrencetype_weekday kind)
     }
     }
 }
+#endif
 
+#if !HAVE_ICALRECURRENCETYPE_MONTH_IS_LEAP || !HAVE_ICALRECURRENCETYPE_MONTH_MONTH
 #define ICAL_LEAP_MONTH 0x1000
+#endif
 
+#if !HAVE_ICALRECURRENCETYPE_MONTH_IS_LEAP
 static int icalrecurrencetype_month_is_leap(short month)
 {
     return (month & ICAL_LEAP_MONTH);
 }
+#endif
 
+#if !HAVE_ICALRECURRENCETYPE_MONTH_MONTH
 static int icalrecurrencetype_month_month(short month)
 {
     return (month & ~ICAL_LEAP_MONTH);
 }
+#endif
 
 static apr_status_t icalduration_to_json(const char *element,
         struct icaldurationtype duration, json_object *jarray)

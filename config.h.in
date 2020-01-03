@@ -1,5 +1,14 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to 1 if you have the `icalrecurrencetype_month_is_leap' function. */
+#undef HAVE_ICALRECURRENCETYPE_MONTH_IS_LEAP
+
+/* Define to 1 if you have the `icalrecurrencetype_month_month' function. */
+#undef HAVE_ICALRECURRENCETYPE_MONTH_MONTH
+
+/* Define to 1 if you have the `icalrecur_weekday_to_string' function. */
+#undef HAVE_ICALRECUR_WEEKDAY_TO_STRING
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 

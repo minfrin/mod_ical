@@ -1,7 +1,7 @@
 # RPM Spec file for mod_ical
 
 Name:      mod_ical
-Version:   0.0.7
+Version:   0.0.8
 Release:   1%{?dist}
 Summary:   Apache iCal/jCal/xCal filter module
 License:   ASL 2.0

@@ -52,6 +52,7 @@ AC_TYPE_SIZE_T
 AC_CHECK_LIB(ical, icalparser_new)
 AC_CHECK_LIB(xml2, htmlParseDocument)
 AC_CHECK_LIB(json-c, json_object_new_object)
+AC_CHECK_FUNCS([icalrecur_weekday_to_string icalrecurrencetype_month_is_leap icalrecurrencetype_month_month])
 
 AC_SUBST(PACKAGE_VERSION)
 AC_OUTPUT
