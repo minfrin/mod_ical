@@ -8,7 +8,7 @@ License:   ASL 2.0
 Group:     System Environment/Daemons
 Source:    https://github.com/minfrin/%{name}/releases/download/%{name}-%{version}/%{name}-%{version}.tar.bz2
 Url:       https://github.com/minfrin/%{name}
-BuildRequires: gcc, pkgconfig(apr-1), pkgconfig(apr-util-1), httpd-devel, pkgconfig(libical), pkgconfig(json-c), pkgconfig(libxml-2.0)
+BuildRequires: gcc, /usr/bin/apxs, pkgconfig(apr-1), pkgconfig(apr-util-1), pkgconfig(libical), pkgconfig(json-c), pkgconfig(libxml-2.0)
 Requires: httpd
 
 %description

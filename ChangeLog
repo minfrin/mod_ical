@@ -1,5 +1,10 @@
 
 
+Changes with v0.0.8
+
+  *) Depend on /usr/bin/apxs so that we can build on OpenSUSE.
+     [Graham Leggett]
+
 Changes with v0.0.7
 
   *) Remove unused variable assignments. [Graham Leggett]
