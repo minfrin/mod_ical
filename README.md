@@ -9,6 +9,11 @@ websites and javascript applications without server side
 development.
 
 
+### Downloads
+mod_ical is available as RPMs through [COPR] as follows:
+
+    dnf copr enable minfrin/mod_ical
+
 ### Features
 
 - Filter iCalendar entries to show the next entry, the last entry,
@@ -203,4 +208,5 @@ mod_ical depends on:
   [libxml2]: <http://www.xmlsoft.org/>
   [json-c]: <https://github.com/json-c/json-c/wiki>
   [Olson city]: <https://en.wikipedia.org/wiki/Tz_database>
+  [COPR]: <https://copr.fedorainfracloud.org/coprs/minfrin/mod_ical/>
 
