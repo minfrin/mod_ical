@@ -14,6 +14,8 @@ mod_ical is available as RPMs through [COPR] as follows:
 
     dnf copr enable minfrin/mod_ical
 
+Ubuntu packages are available through [PPA].
+
 ### Features
 
 - Filter iCalendar entries to show the next entry, the last entry,
@@ -209,4 +211,4 @@ mod_ical depends on:
   [json-c]: <https://github.com/json-c/json-c/wiki>
   [Olson city]: <https://en.wikipedia.org/wiki/Tz_database>
   [COPR]: <https://copr.fedorainfracloud.org/coprs/minfrin/mod_ical/>
-
+  [PPA]: <https://launchpad.net/~minfrin/+archive/ubuntu/apache2/>
