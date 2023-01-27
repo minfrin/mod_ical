@@ -29,6 +29,7 @@
 #include "http_log.h"
 #include "http_protocol.h"
 #include "util_filter.h"
+#include "ap_expr.h"
 #include "apr_strings.h"
 #include "apr_lib.h"
 
@@ -94,6 +95,7 @@ typedef struct ical_ctx {
     apr_bucket_brigade *tmp;
     icalparser *parser;
     icaltimezone *tz;
+    const char *uid;
     int seen_eol;
     int eat_crlf;
     int seen_eos;
@@ -106,8 +108,10 @@ typedef struct ical_conf {
     unsigned int timezone_set:1; /* has timezone been set */
     unsigned int filter_set:1; /* has filtering been set */
     unsigned int format_set:1; /* has formatting been set */
+    unsigned int uid_set:1; /* has formatting been set */
     icaltimezone *timezone; /* override the timezone */
     ap_ical_filter_e filter; /* type of filtering */
+    ap_expr_info_t *uid; /* override the uid */
     ap_ical_format_e format; /* type of formatting */
 } ical_conf;
 
@@ -1974,6 +1978,18 @@ static icalcomponent *filter_component(ap_filter_t *f, icalcomponent *comp)
 
             icalcompiter_next(&iter);
 
+            /* uid match? short circuit everything */
+            if (ctx->uid && ctx->uid[0]) {
+
+                const char *uid = icalcomponent_get_uid(scomp);
+
+                if (!uid || strcasecmp(uid, ctx->uid)) {
+                    icalcomponent_remove_component(comp, scomp);
+                }
+
+                continue;
+            }
+
             switch (ctx->filter) {
             case AP_ICAL_FILTER_NEXT: {
                 struct icaltimetype end = icalcomponent_get_dtend(scomp);
@@ -2117,6 +2133,28 @@ static apr_status_t ical_footer(ap_filter_t *f)
     return APR_SUCCESS;
 }
 
+static apr_status_t ical_param(ap_filter_t *f)
+{
+    ical_ctx *ctx = f->ctx;
+    const char *err = NULL;
+
+    ical_conf *conf = ap_get_module_config(f->r->per_dir_config,
+            &ical_module);
+
+    if (conf->uid) {
+        ctx->uid = ap_expr_str_exec(f->r, conf->uid, &err);
+
+        if (err) {
+            ap_log_rerror(APLOG_MARK, APLOG_WARNING, 0, f->r,
+                    "Failure while evaluating the IcalUid expression for '%s', "
+                            "option ignored: %s", f->r->uri, err);
+        }
+
+    }
+
+    return APR_SUCCESS;
+}
+
 static apr_status_t ical_query(ap_filter_t *f)
 {
     ical_ctx *ctx = f->ctx;
@@ -2175,6 +2213,11 @@ static apr_status_t ical_query(ap_filter_t *f)
 
             }
 
+            if (!strncmp(key, "uid", klen)) {
+
+                ctx->uid = apr_pstrndup(f->r->pool, val, vlen);
+
+            }
 
         }
 
@@ -2265,7 +2308,7 @@ static apr_status_t ical_out_filter(ap_filter_t *f, apr_bucket_brigade *bb)
         if (ctx->output == AP_ICAL_OUTPUT_NEGOTIATED) {
             const char *ct;
             ct = ap_field_noparam(r->pool,
-                    apr_table_get(r->headers_out, "Content-Type"));
+                    r->content_type ? r->content_type : apr_table_get(r->headers_out, "Content-Type"));
             if (!ct || strcasecmp(ct, "text/calendar")) {
                 ap_log_rerror(APLOG_MARK, APLOG_WARNING, APR_SUCCESS, r,
                         "unexpected content-type '%s', %s filter needs 'text/calendar', filter disabled",
@@ -2305,6 +2348,9 @@ static apr_status_t ical_out_filter(ap_filter_t *f, apr_bucket_brigade *bb)
             }
             apr_table_merge(r->headers_out, "Vary", "Accept");
         }
+
+        /* handle parameters */
+        ical_param(f);
 
         /* type of filtering/formatting to do */
         ical_query(f);
@@ -2470,6 +2516,8 @@ static void *merge_ical_config(apr_pool_t *p, void *basev, void *addv)
     new->filter_set = add->filter_set || base->filter_set;
     new->format = (add->format_set == 0) ? base->format : add->format;
     new->format_set = add->format_set || base->format_set;
+    new->uid = (add->uid_set == 0) ? base->uid : add->uid;
+    new->uid_set = add->uid_set || base->uid_set;
 
     return new;
 }
@@ -2520,6 +2568,25 @@ static const char *set_ical_format(cmd_parms *cmd, void *dconf, const char *arg)
     return NULL;
 }
 
+static const char *set_ical_uid(cmd_parms *cmd, void *dconf, const char *arg)
+{
+    ical_conf *conf = dconf;
+    const char *expr_err = NULL;
+
+    conf->uid = ap_expr_parse_cmd(cmd, arg, AP_EXPR_FLAG_STRING_RESULT,
+                &expr_err, NULL);
+
+    if (expr_err) {
+        return apr_pstrcat(cmd->temp_pool,
+                "ICalUid: cannot parse expression '", arg, "': ",
+                expr_err, NULL);
+    }
+
+    conf->uid_set = 1;
+
+    return NULL;
+}
+
 static const command_rec ical_cmds[] = {
     AP_INIT_TAKE1("ICalTimezone", set_ical_timezone, NULL, ACCESS_CONF,
         "Override the timezone on the calendar to the given location, for example Europe/London"),
@@ -2527,6 +2594,8 @@ static const command_rec ical_cmds[] = {
         "Set the filtering to 'none', 'next', 'last', future' or 'past'. Defaults to 'past'"),
     AP_INIT_TAKE1("ICalFormat", set_ical_format, NULL, ACCESS_CONF,
         "Set the formatting to 'none', 'spaced' or 'pretty'. Defaults to 'none'"),
+    AP_INIT_TAKE1("ICalUid", set_ical_uid, NULL, ACCESS_CONF,
+	        "Specify an expression that resolves to the UID of the desired entry. If the result is empty, we fall back to the filter."),
     { NULL }
 };
 

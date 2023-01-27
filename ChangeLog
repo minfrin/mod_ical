@@ -1,4 +1,12 @@
 
+Changes with v1.0.0
+
+  *) Add ICalUid and the uid query parameter to enable an explicit
+     calendar entry to pass the filter. [Graham Leggett]
+
+  *) Pick up the Content-Type from r->content_type if set. [Graham
+     Leggett]
+
 Changes with v0.0.8
 
   *) Handle cases where icalrecur_weekday_to_string,
