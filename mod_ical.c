@@ -704,7 +704,7 @@ static apr_status_t icalvalue_multi_to_json(ap_filter_t *f, icalvalue *val,
         char *str = icalvalue_as_ical_string_r(val);
 
         if (str) {
-            const char *slider = str;
+            char *slider = str;
 
             while (slider) {
                 const char *token = slider;
@@ -756,7 +756,7 @@ static apr_status_t icalvalue_multi_to_xml(ap_filter_t *f,
         /* write out each value */
         str = icalvalue_as_ical_string_r(val);
         if (str) {
-            const char *slider = str;
+            char *slider = str;
 
             while (slider) {
                 const char *token = slider;
@@ -2158,7 +2158,7 @@ static apr_status_t ical_param(ap_filter_t *f)
 static apr_status_t ical_query(ap_filter_t *f)
 {
     ical_ctx *ctx = f->ctx;
-    const char *slider = f->r->args;
+    char *slider = f->r->args;
 
     ical_conf *conf = ap_get_module_config(f->r->per_dir_config,
             &ical_module);

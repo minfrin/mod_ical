@@ -1,6 +1,8 @@
 
 Changes with v1.0.0
 
+  *) Align const when handling query arguments. [Graham Leggett]
+
   *) Add ICalUid and the uid query parameter to enable an explicit
      calendar entry to pass the filter. [Graham Leggett]
 
