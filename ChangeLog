@@ -1,4 +1,8 @@
 
+Changes with v1.0.1
+
+  *) Locate module in apache2/mod_ical.so on SUSE. [Graham Leggett]
+
 Changes with v1.0.0
 
   *) Locate module in apache2/mod_ical.so or httpd/modules/mod_ical.so

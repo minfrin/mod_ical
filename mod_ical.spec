@@ -37,7 +37,7 @@ RFC6321 xCal / RFC7265 jCal.
 %make_install
 
 %files
-%if 0%{?mdkversion}%{?is_opensuse}
+%if 0%{?mdkversion}%{?sle_version}%{?suse_version}
 %{_libdir}/apache2/mod_ical.so
 %else
 %{_libdir}/httpd/modules/mod_ical.so
