@@ -1,7 +1,7 @@
 # RPM Spec file for mod_ical
 
 Name:      mod_ical
-Version:   0.0.8
+Version:   1.0.0
 Release:   1%{?dist}
 Summary:   Apache iCal/jCal/xCal filter module
 License:   ASL 2.0
@@ -9,13 +9,15 @@ Group:     System Environment/Daemons
 Source:    https://github.com/minfrin/%{name}/releases/download/%{name}-%{version}/%{name}-%{version}.tar.bz2
 Url:       https://github.com/minfrin/%{name}
 BuildRequires: gcc, pkgconfig(apr-1), pkgconfig(apr-util-1), pkgconfig(libical), pkgconfig(json-c), pkgconfig(libxml-2.0)
-Requires: httpd
 %if 0%{?is_opensuse}
+Requires: apache2
 BuildRequires: apache2-devel
 %else
-%if 0%{?mgaversion}
+%if 0%{?mgaversion}%{?mdkversion}
+Requires: apache
 BuildRequires: apache-devel
 %else
+Requires: httpd
 BuildRequires: httpd-devel
 %endif
 %endif
@@ -35,7 +37,7 @@ RFC6321 xCal / RFC7265 jCal.
 %make_install
 
 %files
-%if 0%{?is_opensuse}
+%if 0%{?mdkversion}%{?is_opensuse}
 %{_libdir}/apache2/mod_ical.so
 %else
 %{_libdir}/httpd/modules/mod_ical.so

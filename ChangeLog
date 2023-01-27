@@ -1,6 +1,9 @@
 
 Changes with v1.0.0
 
+  *) Locate module in apache2/mod_ical.so or httpd/modules/mod_ical.so
+     depending on platform. [Graham Leggett]
+
   *) Align const when handling query arguments. [Graham Leggett]
 
   *) Add ICalUid and the uid query parameter to enable an explicit
