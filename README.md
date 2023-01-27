@@ -97,6 +97,10 @@ consistent regardless of the timezone setting of the backend calendar.
 - **ICalFormat**: Set the formatting to 'none', 'spaced' or 'pretty'.
   Defaults to 'none'.
 
+- **ICalUid**: Set an expression which, if it resolves to anything of non
+  zero length, overrides the filter and returns the entry with the given
+  UID. Defaults to unset.
+
 
 ### Query Parameters
 
@@ -110,6 +114,9 @@ basis by the addition of the following optional query parameters:
   or 'past'.
 
 - **format**: Set the formatting to 'none', 'spaced' or 'pretty'.
+
+- **uid**: If set, overrides the filter and returns the entry with
+  the given UID.
 
 ```
 http://example.com/calendars/upcoming-events.ics?tz=Europe/London&filter=next&format=pretty
